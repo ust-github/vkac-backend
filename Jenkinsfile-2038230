@@ -19,7 +19,7 @@ pipeline {
       steps {
         script {
 		docker.withTool('docker'){
-			docker.withRegistry('https://artifactory.dagility.com', ''){
+			docker.withRegistry('https://artifactory.dagility.com', 'cacebf1e-b806-43d7-a08e-0b32122840fd'){
 				sh 'docker build -t artifactory.dagility.com/docker/vkac-backend:latest .'
 			sh 'docker push artifactory.dagility.com/docker/vkac-backend:latest'
 			}
@@ -31,7 +31,7 @@ pipeline {
 ln -sf /usr/local/bin/helm3 /usr/local/bin/helm
 ''', label: 'rlklcw'
         sh script: 'helm package chart', label: 'ijhrf0'
-        withCredentials([   usernamePassword(credentialsId: '', passwordVariable: 'PASS', usernameVariable: 'USER')]) {
+        withCredentials([   usernamePassword(credentialsId: 'cacebf1e-b806-43d7-a08e-0b32122840fd', passwordVariable: 'PASS', usernameVariable: 'USER')]) {
    	script {
 		sh "curl -u$USER:$PASS -T vkac-backend-chart-0.1.0.tgz 'https://artifactory.dagility.com/artifactory/helm-local/vkac-backend-chart-0.1.0.tgz' "
 	}
@@ -39,7 +39,9 @@ ln -sf /usr/local/bin/helm3 /usr/local/bin/helm
 
         script { sh script: 'sleep 0.005', label: '4j2evm'}
 } // end step group
-        sh script: 'helm repo add vkac-backend https://artifactory.dagility.com/artifactory/helm ', label: 'rvsu01'
+        withCredentials([   usernamePassword(credentialsId: 'cacebf1e-b806-43d7-a08e-0b32122840fd', passwordVariable: 'PASS', usernameVariable: 'USER')]) {
+   sh script: 'helm repo add vkac-backend https://artifactory.dagility.com/artifactory/helm --username $USER --password $PASS ', label: 'rvsu01' 
+}
         sh script: 'helm repo update', label: 'mesfnb'
         sh script: 'helm upgrade vkac-backend-deployment vkac-backend/vkac-backend-chart --install --values chart-values.yaml --namespace default --set ingress.hosts[0].host=vkac-backend-default.dagility.com', label: 'ixxrui'
       } //end steps
