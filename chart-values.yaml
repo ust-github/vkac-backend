@@ -1,0 +1,14 @@
+image:
+  repository: artifactory.dagility.com/docker/vkac-backend
+  tag: latest
+  pullPolicy: Always
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: nginx-internal
+  hosts:
+  - host: vkac-backend-default.dagility.com
+    paths:
+    - /
+serviceAccount:
+  create: false
